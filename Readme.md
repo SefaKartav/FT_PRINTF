@@ -1,25 +1,26 @@
 *This project has been created as part of the 42 curriculum by sekartav.*
+
 # ft_printf
 
 ## Description
 
-**ft_printf**, C dilindeki standart `printf` fonksiyonunun yeniden yazılmış bir implementasyonudur.
+**ft_printf**, C dilindeki standart `printf` fonksiyonunun yeniden yazılmış bir versiyonudur.
 
-Bu projenin amacı:
+Bu projenin temel amacı:
 
 - Variadic fonksiyonları (`stdarg.h`) öğrenmek
 - Format string parsing mantığını kavramak
 - Farklı veri tiplerini düşük seviyeli I/O kullanarak yazdırmak
-- Recursion ve sayı tabanı dönüşümlerini uygulamak
+- Sayı tabanı dönüşümlerini ve recursion tekniklerini uygulamak
 
-Bu proje, 42 müfredatındaki daha büyük projeler (get_next_line, pipex, minishell vb.) için temel oluşturur.
+`ft_printf`, 42 müfredatındaki sonraki projelerde kullanılacak temel bir yapı taşıdır ve formatlama, pointer kullanımı ve bellek kontrolü konularında pratik kazandırır.
 
 ---
 
 ## Supported Format Specifiers
 
 | Specifier | Description |
-|------------|-------------|
+|-----------|-------------|
 | `%c` | Character |
 | `%s` | String |
 | `%p` | Pointer (hexadecimal) |
@@ -32,46 +33,7 @@ Bu proje, 42 müfredatındaki daha büyük projeler (get_next_line, pipex, minis
 
 ---
 
-## Function Prototypes
-
-```c
-int ft_printf(const char *format, ...);
-
-int ft_putchar(int a);
-int ft_putstr(char *a);
-int ft_putnbr(int n);
-int ft_putnbrl(unsigned int n);
-
-int ft_puthexb(unsigned int a, char *base);
-int ft_puthexk(unsigned int a, char *base);
-int ft_puthexl(unsigned long a);
-int ft_puthexp(void *c);
-```
-
----
-
-## Project Structure
-
-- **ft_printf.c**  
-  Format string’i parse eder ve uygun yazdırma fonksiyonunu çağırır.
-
-- **Character & String Output**
-  - `ft_putchar`
-  - `ft_putstr`
-
-- **Decimal Output**
-  - `ft_putnbr` (signed)
-  - `ft_putnbrl` (unsigned)
-
-- **Hexadecimal Output**
-  - `ft_puthexb`
-  - `ft_puthexk`
-  - `ft_puthexl`
-  - `ft_puthexp`
-
----
-
-## Compilation
+## Instructions
 
 ### Requirements
 
@@ -79,12 +41,27 @@ int ft_puthexp(void *c);
 - make
 - Unix-based system
 
-### Commands
+### Compilation
 
 ```bash
 make
+```
+
+### Cleaning object files
+
+```bash
 make clean
+```
+
+### Full clean
+
+```bash
 make fclean
+```
+
+### Rebuild
+
+```bash
 make re
 ```
 
@@ -111,14 +88,114 @@ int main(void)
 
 ---
 
-## Concepts Practiced
+## Algorithm and Data Structure Explanation
 
-- Variadic functions (`va_list`, `va_start`, `va_arg`, `va_end`)
-- Format parsing
-- Recursive number printing
-- Base conversion (decimal → hexadecimal)
-- Low-level output using `write`
-- Memory-safe pointer handling
+### Overall Approach
+
+`ft_printf` fonksiyonu, format string’i karakter karakter dolaşarak çalışır.
+
+Algoritma şu adımlardan oluşur:
+
+1. Format string baştan sona okunur.
+2. Normal karakterle karşılaşılırsa doğrudan ekrana yazdırılır.
+3. `%` karakteri görülürse:
+   - Bir sonraki karakter okunur.
+   - Bu karakter format belirteci olarak yorumlanır.
+4. Belirtece göre uygun yazdırma fonksiyonu çağrılır.
+
+Bu işlem string sonuna kadar devam eder.
+
+---
+
+### Variadic Argument Handling
+
+Fonksiyon, değişken sayıda argüman almak için `stdarg.h` kullanır:
+
+- `va_list` → argüman listesini tutar
+- `va_start` → argüman listesini başlatır
+- `va_arg` → sıradaki argümanı alır
+- `va_end` → listeyi sonlandırır
+
+Bu yapı sayesinde fonksiyon, her format belirteci için doğru veri tipini alıp yazdırabilir.
+
+---
+
+### Number Printing Strategy
+
+Sayılar **recursive bölme yöntemi** ile yazdırılır.
+
+Örnek: `1234` yazdırma süreci
+
+```
+1234 / 10 → 123
+123 / 10 → 12
+12 / 10 → 1
+1 / 10 → 0
+```
+
+Sonrasında rakamlar geri dönüşte yazdırılır:
+
+```
+1 → 2 → 3 → 4
+```
+
+Bu yöntem:
+
+- Ek bellek kullanmaz
+- Stack üzerinde çalışır
+- Daha sade ve okunabilir bir algoritma sağlar
+
+---
+
+### Hexadecimal Conversion
+
+Hexadecimal dönüşümde:
+
+1. Sayı 16’ya bölünür.
+2. Kalan değer base string içinden alınır.
+
+Örnek:
+
+```
+255 → 255 % 16 = 15 → 'f'
+255 / 16 = 15
+15 % 16 = 15 → 'f'
+```
+
+Sonuç:
+
+```
+ff
+```
+
+Bu işlem de recursive şekilde yapılır.
+
+---
+
+### Pointer Printing
+
+Pointer adresleri:
+
+- `unsigned long` tipine dönüştürülür
+- Başına `0x` eklenir
+- Hexadecimal olarak yazdırılır
+
+---
+
+## Resources
+
+### Classic references
+
+- `man 3 printf`
+- The C Programming Language — Kernighan & Ritchie
+- https://en.cppreference.com/w/c/io/fprintf
+- Beej's Guide to C — https://beej.us/guide/bgc/
+
+### 42 and community resources
+
+- 42 ft_printf subject PDF
+- 42 cursus GitBook
+- Various 42 student repositories for comparison
 
 ---
 
@@ -129,7 +206,7 @@ AI tools (ChatGPT, Grok, Claude) were used for:
 - Understanding variadic function mechanics
 - Planning format parsing logic
 - Reviewing edge cases
-- Improving code structure and readability
+- Improving code readability and structure
 
 > No function was directly copied.  
 > All implementations were written by me.  

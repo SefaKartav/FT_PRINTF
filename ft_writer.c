@@ -6,7 +6,7 @@
 /*   By: sekartav <sekartav@student.42istanbul.com.t+#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 01:56:28 by sekartav          #+#    #+#             */
-/*   Updated: 2026/02/18 19:41:23 by sekartav         ###   ########.fr       */
+/*   Updated: 2026/02/19 06:23:52 by sekartav         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int	ft_putstr(char *a)
 int	ft_puthexb(unsigned int a, char *base)
 {
 	int	x;
+
 	x = 0;
 	if (a >= 16)
 		x += ft_puthexb(a / 16, base);
